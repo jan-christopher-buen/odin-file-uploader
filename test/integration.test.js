@@ -89,7 +89,14 @@ before(async () => {
   execFileSync(
     process.execPath,
     ['node_modules/prisma/build/index.js', 'migrate', 'deploy'],
-    { env: { ...process.env, DATABASE_URL: connection }, stdio: 'pipe' },
+    {
+      env: {
+        ...process.env,
+        DATABASE_URL: connection,
+        DIRECT_DATABASE_URL: connection,
+      },
+      stdio: 'pipe',
+    },
   )
   dir = await mkdtemp(path.join(os.tmpdir(), 'folio-test-'))
   config = {
@@ -165,6 +172,9 @@ test('signup validation, normalized uniqueness, login, persisted sessions, CSRF 
   const page = await get(user, '/dashboard')
   csrf = token(page)
   assert.ok(!page.text.includes('passwordHash'))
+  const health = await request(app).get('/health').expect(200)
+  assert.deepEqual(health.body, { status: 'ok' })
+  assert.equal(health.headers['set-cookie'], undefined)
   assert.ok((await db.session.count()) > 0)
   const persistedSession = await db.session.findFirst({
     where: {

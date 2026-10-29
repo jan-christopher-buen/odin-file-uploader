@@ -37,6 +37,7 @@ export async function createApp({ db, config, storage }) {
   app.set('views', path.join(root, 'src/views'))
   if (config.proxyHops) app.set('trust proxy', config.proxyHops)
   app.disable('x-powered-by')
+  app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }))
   app.use(helmet())
   app.use('/assets', express.static(path.join(root, 'public')))
   app.use(

@@ -44,6 +44,7 @@ Node.js 24+, Express 5, JavaScript ES modules, EJS, plain CSS, PostgreSQL, Prism
 | Variable               | Purpose                                                    |
 | ---------------------- | ---------------------------------------------------------- |
 | `DATABASE_URL`         | Application PostgreSQL connection                          |
+| `DIRECT_DATABASE_URL`  | Optional direct PostgreSQL connection for migrations       |
 | `TEST_DATABASE_URL`    | Separate `odin_file_uploader_test` database                |
 | `SHADOW_DATABASE_URL`  | Dedicated disposable development migration database        |
 | `SESSION_SECRET`       | Server-side session signing secret, at least 32 characters |
@@ -72,7 +73,7 @@ The Supabase Storage adapter is prepared; live cloud behavior still requires acc
 
 Existing local files are not automatically migrated to a cloud bucket. Keep their original storage and database references together. Production refuses local storage because hosts such as Render have ephemeral filesystems.
 
-For a future Render deployment, use a new service, dedicated Neon PostgreSQL database, and private Supabase bucket. Generate the Prisma client during build with `npm ci && npm run prisma:generate`, run `npm run db:deploy` against the hosted database as the release migration step, and start with `npm start`. Use a direct Neon connection for migrations and the appropriate application connection for runtime. Set `NODE_ENV=production`, `TRUST_PROXY_HOPS=1` for Render's single proxy, and a new private session secret. Confirm current provider free-tier availability before provisioning. No hosted resources or deployment are included in this repository.
+For a future Render deployment, use a new service, dedicated Neon PostgreSQL database, and private Supabase bucket. Generate the Prisma client during build with `npm ci && npm run prisma:generate`, set the free service start command to `npm run db:deploy && npm start`. Free Render services do not support pre-deploy commands, so migrations run before the HTTP server starts. Use `/health` as the HTTP health-check path. Set `DIRECT_DATABASE_URL` to the direct Neon connection for migrations and `DATABASE_URL` to the pooled connection for runtime. Tests explicitly override the direct URL with their isolated test connection. Set `NODE_ENV=production`, `TRUST_PROXY_HOPS=1` for Render's single proxy, and a new private session secret. Confirm current provider free-tier availability before provisioning. No hosted resources or deployment are included in this repository.
 
 ## Rules and design
 
