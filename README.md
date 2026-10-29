@@ -2,6 +2,8 @@
 
 A private personal file manager built for [The Odin Project's File Uploader assignment](https://www.theodinproject.com/lessons/nodejs-file-uploader). Organize flat folders, upload files, inspect their details, and download or delete them from a responsive server-rendered workspace.
 
+Live app: [Folio](https://odin-file-uploader-k9d5.onrender.com)
+
 ## Stack
 
 Node.js 24+, Express 5, JavaScript ES modules, EJS, plain CSS, PostgreSQL, Prisma 7 with the PostgreSQL driver adapter, Passport Local, bcryptjs, express-session, the assignment-linked Prisma session store, Multer, and express-validator. npm dependencies and Prettier are pinned in the lockfile.
@@ -65,7 +67,7 @@ Keep local and temporary storage outside `public/`; neither is served statically
 
 ## Private cloud storage
 
-The Supabase Storage adapter is prepared; live cloud behavior still requires account configuration and verification. Supabase is used only for storage. Passport handles authentication, and application/session records remain in PostgreSQL.
+The hosted app uses a dedicated private Supabase Storage bucket. Supabase is used only for storage. Passport handles authentication, and application/session records remain in PostgreSQL.
 
 1. Create a Supabase project and a dedicated **private** bucket, for example `private-files`. Do not enable public access or public object policies. Configure the bucket size limit to match `MAX_FILE_BYTES` and allow PDF, PNG, JPEG, and plain text MIME types.
 2. Set `STORAGE_PROVIDER=supabase`, `SUPABASE_URL`, `SUPABASE_BUCKET`, and a dedicated server-side secret key (`sb_secret_...`) in the private server environment. Never expose the credential to templates or browser code. Server credentials bypass Storage RLS; application ownership checks are mandatory.
@@ -73,7 +75,7 @@ The Supabase Storage adapter is prepared; live cloud behavior still requires acc
 
 Existing local files are not automatically migrated to a cloud bucket. Keep their original storage and database references together. Production refuses local storage because hosts such as Render have ephemeral filesystems.
 
-For a future Render deployment, use a new service, dedicated Neon PostgreSQL database, and private Supabase bucket. Generate the Prisma client during build with `npm ci && npm run prisma:generate`, set the free service start command to `npm run db:deploy && npm start`. Free Render services do not support pre-deploy commands, so migrations run before the HTTP server starts. Use `/health` as the HTTP health-check path. Set `DIRECT_DATABASE_URL` to the direct Neon connection for migrations and `DATABASE_URL` to the pooled connection for runtime. Tests explicitly override the direct URL with their isolated test connection. Set `NODE_ENV=production`, `TRUST_PROXY_HOPS=1` for Render's single proxy, and a new private session secret. Confirm current provider free-tier availability before provisioning. No hosted resources or deployment are included in this repository.
+The live app runs on a Render Free web service in Singapore, with a dedicated Neon PostgreSQL database and private Supabase bucket. For your own deployment, use separate resources. Generate the Prisma client during build with `npm ci && npm run prisma:generate`, set the free service start command to `npm run db:deploy && npm start`. Free Render services do not support pre-deploy commands, so migrations run before the HTTP server starts. Use `/health` as the HTTP health-check path. Set `DIRECT_DATABASE_URL` to the direct Neon connection for migrations and `DATABASE_URL` to the pooled connection for runtime. Tests explicitly override the direct URL with their isolated test connection. Set `NODE_ENV=production`, `TRUST_PROXY_HOPS=1` for Render's single proxy, and a new private session secret. Auto-deploy is disabled for the live service; deploy new commits manually from Render after verification. Free services can sleep when idle, so the first request may be slow. Supabase Free projects can pause after a week of inactivity. Confirm current free-tier availability before provisioning your own resources.
 
 ## Rules and design
 
