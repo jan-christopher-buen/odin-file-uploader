@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+<section class="error-page">
+  <p class="eyebrow">FOLIO / <%= status %></p>
+  <h1><%= title %><span class="accent">.</span></h1>
+  <p role="alert" id="form-error"><%= message %></p>
+  <p class="muted">
+    If you submitted a form, go back to correct it. Passwords and file
+    selections must be entered again.
+  </p>
+  <a class="button primary" href="<%= user ? '/dashboard' : '/login' %>"
+    >Back to
+    <%= user ? 'workspace' : 'login' %>
+    <span aria-hidden="true">↗</span></a
+  >
+</section>
+<%- include('partials/footer') %>

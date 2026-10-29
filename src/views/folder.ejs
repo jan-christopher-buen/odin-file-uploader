@@ -1,0 +1,119 @@
+<%- include('partials/header') %>
+<div class="workspace">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/dashboard">My workspace</a><span aria-hidden="true">/</span
+    ><span><%= folder.name %></span>
+  </nav>
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">YOUR COLLECTION</p>
+      <h1 class="long-name"><%= folder.name %><span class="accent">.</span></h1>
+      <p class="muted">
+        <%= folder.files.length %> files · Created <%=
+        folder.createdAt.toLocaleDateString('en', { dateStyle: 'medium' }) %>
+      </p>
+    </div>
+    <span class="private-badge">◇ Private folder</span>
+  </div>
+  <div class="workspace-grid">
+    <section aria-labelledby="files-title">
+      <div class="section-heading">
+        <h2 id="files-title">
+          Files <span class="count"><%= folder.files.length %></span>
+        </h2>
+        <span class="muted">Newest first</span>
+      </div>
+      <% if (!folder.files.length) { %>
+      <div class="empty">
+        <span class="empty-icon" aria-hidden="true">↥</span>
+        <h3>A fresh folder. A clean slate.</h3>
+        <p>Add your first file using the upload form.</p>
+      </div>
+      <% } %>
+      <div class="file-list">
+        <% folder.files.forEach(file => { %><a
+          class="file-row"
+          href="/files/<%= file.id %>"
+          ><span class="file-type" aria-hidden="true"
+            ><%= file.originalName.split('.').at(-1).toUpperCase() %></span
+          ><span class="file-label"
+            ><strong><%= file.originalName %></strong
+            ><small
+              ><%= bytes(file.byteSize) %>
+              ·
+              <%= file.uploadedAt.toLocaleDateString('en', { dateStyle: 'medium' }) %></small
+            ></span
+          ><span aria-hidden="true">↗</span></a
+        ><% }) %>
+      </div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel">
+        <p class="eyebrow">ADD TO YOUR COLLECTION</p>
+        <h2>Upload a file</h2>
+        <form
+          action="/folders/<%= folder.id %>/files"
+          method="post"
+          enctype="multipart/form-data"
+          class="stack"
+        >
+          <input type="hidden" name="_csrf" value="<%= csrf %>" />
+          <div>
+            <label for="file">Choose a file</label
+            ><input
+              id="file"
+              name="file"
+              type="file"
+              accept=".pdf,.png,.jpg,.jpeg,.txt"
+              required
+              aria-describedby="file-help"
+            /><small id="file-help"
+              >PDF, PNG, JPEG, or UTF-8 text. One file at a time, up to
+              <%=
+              bytes(config.maxFileBytes) %>. HTML and SVG are not
+              allowed.</small
+            >
+          </div>
+          <button class="button primary" type="submit">
+            Upload file <span aria-hidden="true">↑</span>
+          </button>
+        </form>
+      </section>
+      <details class="panel settings">
+        <summary>Folder settings</summary>
+        <form
+          action="/folders/<%= folder.id %>/rename"
+          method="post"
+          class="stack"
+        >
+          <input type="hidden" name="_csrf" value="<%= csrf %>" />
+          <div>
+            <label for="name">Folder name</label
+            ><input
+              id="name"
+              name="name"
+              value="<%= folder.name %>"
+              required
+              maxlength="80"
+            />
+          </div>
+          <button class="button secondary" type="submit">Rename folder</button>
+        </form>
+        <div class="danger-zone">
+          <p>
+            Only empty folders can be deleted. Delete files individually first.
+          </p>
+          <form action="/folders/<%= folder.id %>/delete" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrf %>" /><button
+              type="submit"
+              class="text-button danger"
+            >
+              Delete folder
+            </button>
+          </form>
+        </div>
+      </details>
+    </aside>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<div class="workspace detail-workspace">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/dashboard">My workspace</a><span>/</span
+    ><a href="/folders/<%= file.folder.id %>"><%= file.folder.name %></a
+    ><span>/</span><span>File details</span>
+  </nav>
+  <section class="detail-card">
+    <p class="eyebrow">A PART OF YOUR COLLECTION</p>
+    <div class="detail-icon" aria-hidden="true">↧</div>
+    <h1 class="long-name"><%= file.originalName %></h1>
+    <p class="muted">
+      Safely kept in
+      <a href="/folders/<%= file.folder.id %>"><%= file.folder.name %></a>
+    </p>
+    <dl>
+      <div>
+        <dt>File size</dt>
+        <dd><%= bytes(file.byteSize) %></dd>
+      </div>
+      <div>
+        <dt>File type</dt>
+        <dd><%= file.mimeType %></dd>
+      </div>
+      <div>
+        <dt>Uploaded</dt>
+        <dd>
+          <%= file.uploadedAt.toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short' }) %>
+        </dd>
+      </div>
+      <div>
+        <dt>Access</dt>
+        <dd>Private · Only you</dd>
+      </div>
+    </dl>
+    <a class="button primary" href="/files/<%= file.id %>/download"
+      >Download file <span aria-hidden="true">↓</span></a
+    >
+    <details class="delete-details">
+      <summary>Delete this file</summary>
+      <p>
+        This permanently removes the stored file and its details. This cannot be
+        undone.
+      </p>
+      <form action="/files/<%= file.id %>/delete" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf %>" /><button
+          type="submit"
+          class="button destructive"
+        >
+          Permanently delete file
+        </button>
+      </form>
+    </details>
+  </section>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,80 @@
+<%- include('partials/header') %>
+<div class="workspace">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">YOUR PERSONAL COLLECTION</p>
+      <h1>My workspace<span class="accent">.</span></h1>
+      <p class="muted">A home for your files. A little room to think.</p>
+    </div>
+    <span class="private-badge">◇ Only you have access</span>
+  </div>
+  <div class="workspace-grid">
+    <section aria-labelledby="folders-title">
+      <div class="section-heading">
+        <h2 id="folders-title">
+          Your folders <span class="count"><%= folders.length %></span>
+        </h2>
+        <span class="muted">A–Z</span>
+      </div>
+      <% if (!folders.length) { %>
+      <div class="empty">
+        <span class="empty-icon" aria-hidden="true">▱</span>
+        <h3>Room for something good.</h3>
+        <p>Create your first folder, then add the files you want to keep.</p>
+      </div>
+      <% } %>
+      <div class="folder-grid">
+        <% folders.forEach(folder => { %><a
+          class="folder-card"
+          href="/folders/<%= folder.id %>"
+          ><span class="folder-icon" aria-hidden="true">▱</span
+          ><span class="folder-arrow" aria-hidden="true">↗</span>
+          <h3><%= folder.name %></h3>
+          <p>
+            <%= folder._count.files %> <%= folder._count.files === 1 ? 'file' :
+            'files' %>
+          </p></a
+        ><% }) %>
+      </div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel">
+        <p class="eyebrow">MAKE A LITTLE SPACE</p>
+        <h2>New folder</h2>
+        <form action="/folders" method="post" class="stack">
+          <input type="hidden" name="_csrf" value="<%= csrf %>" />
+          <div>
+            <label for="name">Folder name</label
+            ><input
+              id="name"
+              name="name"
+              maxlength="80"
+              required
+              placeholder="e.g. Everyday essentials"
+            /><small>Names are unique in your workspace, ignoring case.</small>
+          </div>
+          <button class="button primary" type="submit">
+            Create folder <span aria-hidden="true">+</span>
+          </button>
+        </form>
+      </section>
+      <section class="usage">
+        <p class="eyebrow">YOUR SPACE</p>
+        <strong
+          ><%= bytes(usage._sum.byteSize || 0) %>
+          <span
+            >/
+            <%= bytes(config.maxUserBytes) %></span
+          ></strong
+        ><progress
+          value="<%= usage._sum.byteSize || 0 %>"
+          max="<%= config.maxUserBytes %>"
+          aria-label="Storage used"
+        ></progress>
+        <p><%= usage._count %> of <%= config.maxUserFiles %> files used</p>
+        <small>Small space, thoughtfully kept.</small>
+      </section>
+    </aside>
+  </div>
+</div>
+<%- include('partials/footer') %>

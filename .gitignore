@@ -7,3 +7,4 @@ var/
 *.log
 .qa/
 coverage/
+.playwright-mcp/

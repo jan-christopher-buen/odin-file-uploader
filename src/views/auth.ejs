@@ -1,0 +1,94 @@
+<%- include('partials/header') %>
+<div class="auth-layout">
+  <section class="intro">
+    <p class="eyebrow">LESS CLUTTER. MORE CLARITY.</p>
+    <h1>Your files.<br />A place to<br /><em>call home.</em></h1>
+    <p class="intro-copy">
+      Gather your documents, images, and everyday essentials in one calm,
+      private workspace.
+    </p>
+    <div class="paper-art" aria-hidden="true">
+      <div class="paper back"></div>
+      <div class="paper front">
+        <span>THE EVERYDAY COLLECTION</span
+        ><b>Good things,<br />kept together.</b><i>↗</i>
+      </div>
+      <div class="art-label">Organized by you. Accessible only to you.</div>
+    </div>
+  </section>
+  <section class="auth-card" aria-labelledby="auth-title">
+    <span class="section-number">01 / YOUR WORKSPACE</span>
+    <h2 id="auth-title"><%= title %><span class="accent">.</span></h2>
+    <p class="muted">
+      <%= mode === 'login' ? 'Make yourself at home. Your files are waiting.' :
+      'A fresh start for everything you want to keep.' %>
+    </p>
+    <% if (error) { %>
+    <p class="notice" id="auth-error" role="alert"><%= error %></p>
+    <% } %>
+    <form
+      action="/<%= mode %>"
+      method="post"
+      class="stack"
+      aria-describedby="<%= error ? 'auth-error' : 'auth-title' %>"
+    >
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <div>
+        <label for="username">Username</label
+        ><input
+          id="username"
+          name="username"
+          value="<%= username %>"
+          autocomplete="username"
+          minlength="3"
+          maxlength="32"
+          pattern="[a-zA-Z0-9_]{3,32}"
+          required
+          aria-describedby="username-help"
+        /><small id="username-help"
+          >3–32 letters, numbers, or underscores. Case insensitive.</small
+        >
+      </div>
+      <div>
+        <label for="password">Password</label
+        ><input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="<%= mode === 'login' ? 'current-password' : 'new-password' %>"
+          required
+          aria-describedby="password-help"
+        /><small id="password-help"
+          >Passwords preserve spaces. New passwords need 8 characters and at
+          most 72 UTF-8 bytes.</small
+        >
+      </div>
+      <% if (mode === 'signup') { %>
+      <div>
+        <label for="confirmPassword">Confirm password</label
+        ><input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+      <% } %>
+      <button class="button primary" type="submit">
+        <%= mode === 'login' ? 'Open my workspace' : 'Create my workspace'
+        %><span aria-hidden="true">↗</span>
+      </button>
+    </form>
+    <p class="auth-switch">
+      <%= mode === 'login' ? 'New here?' : 'Already have a workspace?' %>
+      <a href="/<%= mode === 'login' ? 'signup' : 'login' %>"
+        ><%= mode === 'login' ? 'Create an account' : 'Log in' %></a
+      >
+    </p>
+    <div class="card-foot">
+      <span aria-hidden="true">◇</span> Your files stay private. Always.
+    </div>
+  </section>
+</div>
+<%- include('partials/footer') %>
