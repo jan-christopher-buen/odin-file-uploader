@@ -77,3 +77,22 @@ test('Supabase adapter uses authenticated streaming and exact-key deletion; prov
     await rm(dir, { recursive: true, force: true })
   }
 })
+
+test('modern Supabase secret keys use only the apikey header', async (t) => {
+  const key = randomUUID()
+  const secret = 'sb_secret_test-only-placeholder'
+  const storage = supabaseStorage({
+    supabaseUrl: 'https://storage.example.test',
+    supabaseKey: secret,
+    bucket: 'private-files',
+  })
+  let called = false
+  t.mock.method(globalThis, 'fetch', async (url, options) => {
+    called = true
+    assert.equal(options.headers.apikey, secret)
+    assert.equal(options.headers.Authorization, undefined)
+    return new Response('[]')
+  })
+  await storage.remove({ storageKey: key, storageRef: `private-files/${key}` })
+  assert.ok(called)
+})

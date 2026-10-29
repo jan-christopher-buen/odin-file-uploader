@@ -41,25 +41,25 @@ Node.js 24+, Express 5, JavaScript ES modules, EJS, plain CSS, PostgreSQL, Prism
 
 ## Configuration
 
-| Variable               | Purpose                                                    |
-| ---------------------- | ---------------------------------------------------------- |
-| `DATABASE_URL`         | Application PostgreSQL connection                          |
-| `DIRECT_DATABASE_URL`  | Optional direct PostgreSQL connection for migrations       |
-| `TEST_DATABASE_URL`    | Separate `odin_file_uploader_test` database                |
-| `SHADOW_DATABASE_URL`  | Dedicated disposable development migration database        |
-| `SESSION_SECRET`       | Server-side session signing secret, at least 32 characters |
-| `PORT`                 | HTTP port, default 3000                                    |
-| `NODE_ENV`             | `development` locally, `production` when hosted            |
-| `TRUST_PROXY_HOPS`     | 0 locally; 1 only behind exactly one trusted reverse proxy |
-| `STORAGE_PROVIDER`     | `local` or `supabase`                                      |
-| `LOCAL_STORAGE_DIR`    | Private local objects, default `./var/files`               |
-| `TEMP_UPLOAD_DIR`      | Temporary upload staging, default `./var/tmp`              |
-| `MAX_FILE_BYTES`       | Per-file limit, default 5242880                            |
-| `MAX_USER_BYTES`       | Per-user storage quota, default 52428800                   |
-| `MAX_USER_FILES`       | Per-user file quota, default 100                           |
-| `SUPABASE_URL`         | Storage project's HTTPS URL                                |
-| `SUPABASE_SERVICE_KEY` | Private server-side service role credential                |
-| `SUPABASE_BUCKET`      | Dedicated private bucket name                              |
+| Variable               | Purpose                                                     |
+| ---------------------- | ----------------------------------------------------------- |
+| `DATABASE_URL`         | Application PostgreSQL connection                           |
+| `DIRECT_DATABASE_URL`  | Optional direct PostgreSQL connection for migrations        |
+| `TEST_DATABASE_URL`    | Separate `odin_file_uploader_test` database                 |
+| `SHADOW_DATABASE_URL`  | Dedicated disposable development migration database         |
+| `SESSION_SECRET`       | Server-side session signing secret, at least 32 characters  |
+| `PORT`                 | HTTP port, default 3000                                     |
+| `NODE_ENV`             | `development` locally, `production` when hosted             |
+| `TRUST_PROXY_HOPS`     | 0 locally; 1 only behind exactly one trusted reverse proxy  |
+| `STORAGE_PROVIDER`     | `local` or `supabase`                                       |
+| `LOCAL_STORAGE_DIR`    | Private local objects, default `./var/files`                |
+| `TEMP_UPLOAD_DIR`      | Temporary upload staging, default `./var/tmp`               |
+| `MAX_FILE_BYTES`       | Per-file limit, default 5242880                             |
+| `MAX_USER_BYTES`       | Per-user storage quota, default 52428800                    |
+| `MAX_USER_FILES`       | Per-user file quota, default 100                            |
+| `SUPABASE_URL`         | Storage project's HTTPS URL                                 |
+| `SUPABASE_SERVICE_KEY` | Private server-side secret key (or legacy service role key) |
+| `SUPABASE_BUCKET`      | Dedicated private bucket name                               |
 
 Keep local and temporary storage outside `public/`; neither is served statically. Real environment files, uploads, and generated Prisma output are gitignored.
 
@@ -68,7 +68,7 @@ Keep local and temporary storage outside `public/`; neither is served statically
 The Supabase Storage adapter is prepared; live cloud behavior still requires account configuration and verification. Supabase is used only for storage. Passport handles authentication, and application/session records remain in PostgreSQL.
 
 1. Create a Supabase project and a dedicated **private** bucket, for example `private-files`. Do not enable public access or public object policies. Configure the bucket size limit to match `MAX_FILE_BYTES` and allow PDF, PNG, JPEG, and plain text MIME types.
-2. Set `STORAGE_PROVIDER=supabase`, `SUPABASE_URL`, `SUPABASE_BUCKET`, and the project's service role credential in the private server environment. Never expose the credential to templates or browser code. Server credentials bypass Storage RLS; application ownership checks are mandatory.
+2. Set `STORAGE_PROVIDER=supabase`, `SUPABASE_URL`, `SUPABASE_BUCKET`, and a dedicated server-side secret key (`sb_secret_...`) in the private server environment. Never expose the credential to templates or browser code. Server credentials bypass Storage RLS; application ownership checks are mandatory.
 3. Verify upload, authorized byte-matching download, deletion, and cross-user rejection with actual credentials before using the app for real files. Downloads stream through authenticated application routes; no public URLs are created.
 
 Existing local files are not automatically migrated to a cloud bucket. Keep their original storage and database references together. Production refuses local storage because hosts such as Render have ephemeral filesystems.

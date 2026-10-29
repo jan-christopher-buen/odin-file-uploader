@@ -21,7 +21,9 @@ export function supabaseStorage(config) {
   }
   const headers = {
     apikey: config.supabaseKey,
-    Authorization: `Bearer ${config.supabaseKey}`,
+    ...(config.supabaseKey.startsWith('sb_secret_')
+      ? {}
+      : { Authorization: `Bearer ${config.supabaseKey}` }),
   }
   async function checked(response) {
     if (!response.ok) {
