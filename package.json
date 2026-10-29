@@ -1,0 +1,45 @@
+{
+  "name": "odin-file-uploader",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --env-file-if-exists=.env --test --test-concurrency=1",
+    "prisma:generate": "node --env-file-if-exists=.env node_modules/prisma/build/index.js generate",
+    "db:migrate": "node --env-file-if-exists=.env node_modules/prisma/build/index.js migrate dev",
+    "db:deploy": "node --env-file-if-exists=.env node_modules/prisma/build/index.js migrate deploy",
+    "db:validate": "node --env-file-if-exists=.env node_modules/prisma/build/index.js validate",
+    "db:smoke": "node --env-file-if-exists=.env scripts/prisma-smoke.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "@quixo3/prisma-session-store": "3.1.21",
+    "bcryptjs": "3.0.3",
+    "content-disposition": "3.0.0",
+    "ejs": "7.0.2",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.1",
+    "express-session": "1.19.0",
+    "express-validator": "7.3.2",
+    "file-type": "22.2.0",
+    "helmet": "8.3.0",
+    "multer": "2.5.0",
+    "passport": "0.7.0",
+    "passport-local": "1.0.0",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "prettier-plugin-ejs": "1.0.3",
+    "prisma": "7.10.1",
+    "supertest": "7.3.1"
+  }
+}

@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique @db.VarChar(32)
+  passwordHash String
+  folders      Folder[]
+  files        File[]
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  name      String   @db.VarChar(80)
+  nameKey   String   @db.VarChar(80)
+  createdAt DateTime @default(now())
+  files     File[]
+
+  @@unique([ownerId, nameKey])
+  @@unique([id, ownerId])
+}
+
+model File {
+  id           String   @id @default(uuid())
+  ownerId      String
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  folderId     String
+  folder       Folder   @relation(fields: [folderId, ownerId], references: [id, ownerId], onDelete: Restrict)
+  originalName String   @db.VarChar(180)
+  storageKey   String   @unique
+  storageRef   String
+  provider     String
+  mimeType     String
+  byteSize     Int
+  uploadedAt   DateTime @default(now())
+
+  @@index([ownerId, uploadedAt])
+  @@index([folderId, ownerId])
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

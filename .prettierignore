@@ -1,0 +1,7 @@
+package-lock.json
+generated
+var
+.qa
+prisma/migrations
+# Closing layout fragment is maintained manually; it is not standalone HTML.
+src/views/partials/footer.ejs
